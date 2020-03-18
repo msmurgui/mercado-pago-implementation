@@ -1,20 +1,35 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
+<ion-header>
+  <ion-toolbar color='primary'>
+    <ion-title class = 'ion-text-center'>
+      Tienda e-Commerce
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class = 'ion-padding'>
+  <ion-card>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <ion-card-header>
+      <ion-card-title>
+        Celulares que tenemos disponibles!
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor= "let phone of this.mobilePhones; let i = index"
+                  (click)= 'showItemDetails( i )'>
+
+          <ion-thumbnail slot = 'start'>
+            <img src= {{phone.image}} >
+            
+          </ion-thumbnail>
+
+          <strong>{{phone.name}}</strong>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+
+  </ion-card>
+
 </ion-content>

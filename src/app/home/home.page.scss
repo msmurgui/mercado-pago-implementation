@@ -29,3 +29,8 @@
 ion-content ion-toolbar {
   --background: translucent;
 }
+
+ion-alert {
+  min-height: 500;
+  border-radius: 20px;
+}
