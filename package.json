@@ -39,7 +39,8 @@
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1",
     "ionic" : "5.4.16",
-    "@angular/cli": "~8.3.23"
+    "@angular/cli": "~8.3.23",
+    "@angular-devkit/build-angular": "~0.803.20"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.20",
@@ -61,7 +62,8 @@
     "karma-jasmine-html-reporter": "^1.4.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
-    "tslint": "~5.15.0"  
+    "tslint": "~5.15.0",
+    "typescript": "~3.4.3",
   },
   "description": "An Ionic project",
   "cordova": {
