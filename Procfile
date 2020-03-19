@@ -1,1 +1,1 @@
-web:ionic serve --port $PORT --no-open --no-livereload
+web: npm run build && npm start
