@@ -1,15 +1,18 @@
+import { Route, ActivatedRoute } from '@angular/router';
+import { browser } from 'protractor';
 import { Component } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { MercadopagoApiService } from '../services/mercadopago-api/mercadopago-api.service';
 import { mobilePhone } from '../../models/mobilePhoneInterface';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { HttpClient } from '@angular/common/http'
+
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-
-
 
 export class HomePage {
 
@@ -47,13 +50,55 @@ export class HomePage {
   ]
 
   constructor( private alertCtrl : AlertController,
-               private mercadopagoSvc : MercadopagoApiService ) {}
+               private iab : InAppBrowser,
+               private mercadopagoSvc : MercadopagoApiService,
+               private route : ActivatedRoute,
+               private http : HttpClient ) {}
+  ionViewDidEnter(){
+    this.route.params.subscribe((data)=>{
+      console.log("Parametros!", data);
+    });
+    
+    this.route.queryParams.subscribe(( parameters )=>{
+
+      if( parameters.status ){
+        switch( parameters.status ){
+          case 'success':
+          {
+            this.mercadopagoSvc.getPayment( parameters.collection_id )
+                               .then(( response : any )=>{
+                                this.showAlert( 'Compra realizada con exito!!!', 'Id del metodo de pago: ' + response.payment_method_id + '<br />' +
+                                                'Monto del pago: $' + response.transaction_amount + '<br />' +
+                                                'Numero de orden del pedido: ' + response.order.id + '<br />' + 
+                                                'Numero de orden del pedido (external_reference): ' + response.external_reference + '<br />' + 
+                                                'Id de pago de Mercado Pago: ' + response.id );
+                               }).catch(()=>{
+                                 this.showAlert( 'Compra realizada con exito!', 'Pero ocurrio un problema trayendo los datos del pago. Su id es: ' + parameters.collection_id );
+                               });
+                  
+          }
+          break;
+          case 'pending':
+          {
+            this.showAlert( 'Compra realizada con exito, pero...', 'Queda pendiente el pago!');
+          }
+          break;
+          case 'failure':
+          {
+            this.showAlert( 'Oops!', 'Ocurrio un error realizando la compra, porfavor intenta de nuevo!' );
+          }
+          break;
+        };
+      }
+
+    })
+  }
 
   async showItemDetails( index : number ){
 
     let alert = await this.alertCtrl.create({
       header : this.mobilePhones[ index ].name,
-      subHeader : this.mobilePhones[ index ].price.toString(),
+      subHeader : '$'+this.mobilePhones[ index ].price.toString(),
       message : `<h10>${ this.mobilePhones[ index ].description }</h10>` +
                 `<img src="${ this.mobilePhones[ index ].image }">`,
       buttons : [
@@ -77,12 +122,25 @@ export class HomePage {
   private payItem( phone : mobilePhone ){
     console.log( 'pagando item...' );
 
-    this.mercadopagoSvc.proceedToCheckout( phone ).then(()=>{
+    this.mercadopagoSvc.proceedToCheckout( phone ).then( async( response : string )=>{
+
+      let browser = this.iab.create( response, '_blank', 'hidden:yes, location:no');
+      
 
     }).catch(( error )=>{
 
     });
   }
+
+
+  private async showAlert( header : string, message : string){
+    let alert = await this.alertCtrl.create({
+      header: header,
+      message: message
+    });
+    await alert.present();
+  }
+
 
 }
 

@@ -1,7 +1,4 @@
-import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
-import { InAppBrowser, InAppBrowserEvent } from '@ionic-native/in-app-browser/ngx';
-import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http'
 import { mobilePhone } from '../../../models/mobilePhoneInterface';
 
@@ -15,14 +12,14 @@ export class MercadopagoApiService {
   private sbx_access_token = 'TEST-6317427424180639-090914-d7e31028329ff046e873fae82ed7b93c-469485398';
   private prod_public_key = 'APP_USR-a83913d5-e583-4556-8c19-d2773746b430'; 
   
-  private back_url_success : string = 'localhost:8100/home';
-  private back_url_pending : string = 'pending';
-  private back_url_failure : string = 'failure';
+  private localhost : string = 'localhost:5000/';
+  //private localhost : string = 'https://mercado-pago-certification.herokuapp.com/';
 
-  constructor( private advanced_http : HttpClient,
-               private iab : InAppBrowser, 
-               private platform : Platform
-               ) {}
+  private back_url_success : string = this.localhost + '?status=success';
+  private back_url_pending : string = this.localhost + '?status=pending';
+  private back_url_failure : string = this.localhost + '?status=failure';
+
+  constructor( private http : HttpClient ) {}
 
   proceedToCheckout( phone : mobilePhone ){
 
@@ -35,12 +32,26 @@ export class MercadopagoApiService {
           picture_url : phone.image,
           unit_price : phone.price,
           currency_id: 'ARS'
-        }
-      ],
-
+        }],
         auto_return: 'approved',
         payer: {
+          name: 'Lalo',
+          surname : 'Landa',
           email:'test_user_63274575@testuser.com',
+          phone : {
+            area_code : '011',
+            number : ' 2222-3333'
+          },
+          identification : {
+            type : 'DNI',
+            number : '22.333.444'
+          },
+          adress : {
+            zip_code : '1111',
+            street_name : 'Falsa',
+            street_number : 123
+          }
+
         },
        
         payment_methods: {
@@ -52,6 +63,7 @@ export class MercadopagoApiService {
           ],
           installments: 6,  
         },
+        notification_url : '',
         back_urls:{
           success: this.back_url_success,
           pending: this.back_url_pending,
@@ -61,54 +73,15 @@ export class MercadopagoApiService {
       //}
     };
     
-    console.log(preference);
 
     return new Promise ( ( resolve, reject ) =>{
       
-      //this.advanced_http.setDataSerializer('json');
-      this.advanced_http.post('https://api.mercadopago.com/checkout/preferences?access_token=' + this.sbx_access_token, preference )
-                        .subscribe( (response :any )=>{      
+      //this.http.setDataSerializer('json');
+      this.http.post('https://api.mercadopago.com/checkout/preferences?access_token=' + this.sbx_access_token, preference )
+                        .subscribe( async (response :any )=>{      
         
-        console.log( response );
-
-        let browser = this.iab.create( response.sandbox_init_point, '_blank' , 'location=no');    //This will open link in InAppBrowser
-        
-        let subStart : Subscription;
-        let subExit : Subscription;
-        let subError : Subscription;
-        
-        subStart = browser.on('loadstart').subscribe((event:InAppBrowserEvent )=>{
-    
-          if( event.url.startsWith( 'http://' + this.back_url_success ) ){
-            browser.close();
-            subStart.unsubscribe();   //This will close InAppBrowser Automatically when closeUrl Started 
-            if( !subExit.closed ) subExit.unsubscribe();
-            if( !subError.closed ) subError.unsubscribe();
-            resolve( 1 );  
-          }
-        });
-
-        subExit = browser.on('exit').subscribe(( event: InAppBrowserEvent )=>{
-
-          browser.close();
-          subExit.unsubscribe();
-          if( !subStart.closed ) subStart.unsubscribe();
-          if( !subError.closed ) subError.unsubscribe();
-          resolve( 2 );
-          
-        });
-
-        subError = browser.on('loaderror').subscribe(( event:InAppBrowserEvent )=>{
-
-          browser.close();
-          subError.unsubscribe();
-          if( !subStart.closed ) subStart.unsubscribe();
-          if( !subExit.closed ) subExit.unsubscribe();
-          resolve( 3 );
-          
-        });
-          
-        
+        resolve( response.sandbox_init_point );
+                
       }, (error) =>{
         console.error( error );
         reject( error ); 
@@ -117,6 +90,17 @@ export class MercadopagoApiService {
     });  
   }
 
+  getPayment( id : string ){
+    return new Promise(( resolve, reject )=>{
+      this.http.get(`https://api.mercadopago.com/v1/payments/${ id }?access_token=` + this.sbx_access_token)
+               .subscribe(( response : any )=>{
+                 resolve( response );
+               }, error =>{
+                 console.error( 'Mercado Api Service Error | getPayment(): ', error );
+                 reject();
+               });
+    })
+  }
   
 
 }
