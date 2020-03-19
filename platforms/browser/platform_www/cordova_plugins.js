@@ -64,14 +64,6 @@ module.exports = [
         "id": "cordova-plugin-inappbrowser.InAppBrowserProxy",
         "pluginId": "cordova-plugin-inappbrowser",
         "runs": true
-    },
-    {
-        "file": "plugins/cordova-plugin-webserver/webserver.js",
-        "id": "cordova-plugin-webserver.webserver",
-        "pluginId": "cordova-plugin-webserver",
-        "clobbers": [
-            "webserver"
-        ]
     }
 ];
 module.exports.metadata = 
@@ -83,8 +75,7 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-ionic-webview": "4.1.3",
     "cordova-plugin-ionic-keyboard": "2.2.0",
-    "cordova-plugin-inappbrowser": "3.2.0",
-    "cordova-plugin-webserver": "1.1.0"
+    "cordova-plugin-inappbrowser": "3.2.0"
 }
 // BOTTOM OF METADATA
 });

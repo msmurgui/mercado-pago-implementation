@@ -55,19 +55,16 @@ export class HomePage {
                private route : ActivatedRoute,
                private http : HttpClient ) {}
   ionViewDidEnter(){
-    this.route.params.subscribe((data)=>{
-      console.log("Parametros!", data);
-    });
-    
-    this.route.queryParams.subscribe(( parameters )=>{
 
+    this.route.queryParams.subscribe(( parameters )=>{
+    
       if( parameters.status ){
         switch( parameters.status ){
           case 'success':
           {
             this.mercadopagoSvc.getPayment( parameters.collection_id )
                                .then(( response : any )=>{
-                                this.showAlert( 'Compra realizada con exito!!!', 'Id del metodo de pago: ' + response.payment_method_id + '<br />' +
+                                 this.showAlert( 'Compra realizada con exito!!!', 'Id del metodo de pago: ' + response.payment_method_id + '<br />' +
                                                 'Monto del pago: $' + response.transaction_amount + '<br />' +
                                                 'Numero de orden del pedido: ' + response.order.id + '<br />' + 
                                                 'Numero de orden del pedido (external_reference): ' + response.external_reference + '<br />' + 
@@ -103,7 +100,7 @@ export class HomePage {
                 `<img src="${ this.mobilePhones[ index ].image }">`,
       buttons : [
         {
-          text : 'Pagar la compra!',
+          text : 'Pagar la compra',
           handler : () => {
             this.payItem( this.mobilePhones[ index ] );
           }
@@ -120,13 +117,11 @@ export class HomePage {
   }
 
   private payItem( phone : mobilePhone ){
-    console.log( 'pagando item...' );
 
     this.mercadopagoSvc.proceedToCheckout( phone ).then( async( response : string )=>{
 
-      let browser = this.iab.create( response, '_blank', 'hidden:yes, location:no');
-      
-
+      this.iab.create( response, '_blank', 'hidden:yes, location:no');
+    
     }).catch(( error )=>{
 
     });

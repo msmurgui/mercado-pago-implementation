@@ -15,7 +15,7 @@
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<ion-header>\n  <ion-toolbar color='primary'>\n    <ion-title class = 'ion-text-center'>\n      Tienda e-Commerce\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content class = 'ion-padding'>\n  <ion-card>\n\n    <ion-card-header>\n      <ion-card-title>\n        Celulares que tenemos disponibles!\n      </ion-card-title>\n    </ion-card-header>\n\n    <ion-card-content>\n      <ion-list>\n        <ion-item *ngFor= \"let phone of this.mobilePhones; let i = index\"\n                  (click)= 'showItemDetails( i )'>\n\n          <ion-thumbnail slot = 'start'>\n            <img src= {{phone.image}} >\n            \n          </ion-thumbnail>\n\n          <strong>{{phone.name}} </strong> - ${{phone.price}}\n        </ion-item>\n      </ion-list>\n    </ion-card-content>\n\n  </ion-card>\n\n\n</ion-content>\n";
+    __webpack_exports__["default"] = "<ion-header>\n  <ion-toolbar color='primary'>\n    <ion-title class = 'ion-text-center'>\n      Tienda e-commerce\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content class = 'ion-padding'>\n  <ion-card>\n\n    <ion-card-header>\n      <ion-card-title>\n        Celulares que tenemos disponibles!\n      </ion-card-title>\n    </ion-card-header>\n\n    <ion-card-content>\n      <ion-list>\n        <ion-item *ngFor= \"let phone of this.mobilePhones; let i = index\"\n                  (click)= 'showItemDetails( i )'>\n\n          <ion-thumbnail slot = 'start'>\n            <img src= {{phone.image}} >\n            \n          </ion-thumbnail>\n\n          <strong>{{phone.name}} </strong> - ${{phone.price}}\n        </ion-item>\n      </ion-list>\n    </ion-card-content>\n\n  </ion-card>\n\n\n</ion-content>\n";
     /***/
   },
 
@@ -213,9 +213,6 @@
       }
 
       ionViewDidEnter() {
-        this.route.params.subscribe(data => {
-          console.log("Parametros!", data);
-        });
         this.route.queryParams.subscribe(parameters => {
           if (parameters.status) {
             switch (parameters.status) {
@@ -254,7 +251,7 @@
             subHeader: '$' + this.mobilePhones[index].price.toString(),
             message: "<h10>".concat(this.mobilePhones[index].description, "</h10>") + "<img src=\"".concat(this.mobilePhones[index].image, "\">"),
             buttons: [{
-              text: 'Pagar la compra!',
+              text: 'Pagar la compra',
               handler: () => {
                 this.payItem(this.mobilePhones[index]);
               }
@@ -267,9 +264,8 @@
       }
 
       payItem(phone) {
-        console.log('pagando item...');
         this.mercadopagoSvc.proceedToCheckout(phone).then(response => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
-          let browser = this.iab.create(response, '_blank', 'hidden:yes, location:no');
+          this.iab.create(response, '_blank', 'hidden:yes, location:no');
         })).catch(error => {});
       }
 

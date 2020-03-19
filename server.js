@@ -23,6 +23,27 @@ app.listen(app.get('port'), function () {
 });
 
 app.post("/webhooks", (req, res)=>{
-  app.use(express.static('platforms/browser/www?status=noti'));
-  res.json({message : 'olis'});
+  var message = '';
+  var preMesagge = 'Notificacion de '
+  switch( req.body.action ){
+    case 'payment.created':
+      message = 'creacion de pago'
+    break;
+    
+    case 'payment.updated':
+      message = 'actualizacion de pago';
+    break;
+
+    case 'application.deauthorized':
+      message = 'desvinculacion de una cuenta';
+    break;
+
+    case 'application.authorized':
+      message = 'vinculacion de una cuenta';
+    break;
+    default:
+      preMesagge = 'Notificacion';
+  }
+
+  res.status(201).json({ message : preMesagge + message + ' recibida!'});
 })

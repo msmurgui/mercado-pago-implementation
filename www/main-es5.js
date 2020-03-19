@@ -1071,9 +1071,9 @@
 
         this.prod_access_token = 'APP_USR-6317427424180639-090914-5c508e1b02a34fcce879a999574cf5c9-469485398';
         this.sbx_access_token = 'TEST-6317427424180639-090914-d7e31028329ff046e873fae82ed7b93c-469485398';
-        this.prod_public_key = 'APP_USR-a83913d5-e583-4556-8c19-d2773746b430';
-        this.localhost = 'localhost:5000/'; //private localhost : string = 'https://mercado-pago-certification.herokuapp.com/';
+        this.prod_public_key = 'APP_USR-a83913d5-e583-4556-8c19-d2773746b430'; //private localhost : string = 'http://localhost:5000/';
 
+        this.localhost = 'https://mercado-pago-certification.herokuapp.com/';
         this.back_url_success = this.localhost + '?status=success';
         this.back_url_pending = this.localhost + '?status=pending';
         this.back_url_failure = this.localhost + '?status=failure';
@@ -1118,7 +1118,7 @@
             }],
             installments: 6
           },
-          notification_url: '',
+          notification_url: this.localhost + 'webhooks',
           back_urls: {
             success: this.back_url_success,
             pending: this.back_url_pending,
@@ -1130,9 +1130,10 @@
         return new Promise((resolve, reject) => {
           //this.http.setDataSerializer('json');
           this.http.post('https://api.mercadopago.com/checkout/preferences?access_token=' + this.sbx_access_token, preference).subscribe(response => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
+            console.log('Datos de la preferencia: ', response);
             resolve(response.sandbox_init_point);
           }), error => {
-            console.error(error);
+            console.error('Mercado Api Service Error | getPayment(): ', error);
             reject(error);
           });
         });
@@ -1141,9 +1142,10 @@
       getPayment(id) {
         return new Promise((resolve, reject) => {
           this.http.get("https://api.mercadopago.com/v1/payments/".concat(id, "?access_token=") + this.sbx_access_token).subscribe(response => {
+            console.log('Datos del pago: ', response);
             resolve(response);
           }, error => {
-            console.error('Mercado Api Service Error | getPayment(): ', error);
+            console.error('Mercado Api Service Error | proceedToCheckout(): ', error);
             reject();
           });
         });

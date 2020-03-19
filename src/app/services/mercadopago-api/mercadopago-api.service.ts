@@ -12,8 +12,8 @@ export class MercadopagoApiService {
   private sbx_access_token = 'TEST-6317427424180639-090914-d7e31028329ff046e873fae82ed7b93c-469485398';
   private prod_public_key = 'APP_USR-a83913d5-e583-4556-8c19-d2773746b430'; 
   
-  private localhost : string = 'localhost:5000/';
-  //private localhost : string = 'https://mercado-pago-certification.herokuapp.com/';
+  //private localhost : string = 'http://localhost:5000/';
+  private localhost : string = 'https://mercado-pago-certification.herokuapp.com/';
 
   private back_url_success : string = this.localhost + '?status=success';
   private back_url_pending : string = this.localhost + '?status=pending';
@@ -63,7 +63,7 @@ export class MercadopagoApiService {
           ],
           installments: 6,  
         },
-        notification_url : '',
+        notification_url : this.localhost + 'webhooks',
         back_urls:{
           success: this.back_url_success,
           pending: this.back_url_pending,
@@ -78,12 +78,13 @@ export class MercadopagoApiService {
       
       //this.http.setDataSerializer('json');
       this.http.post('https://api.mercadopago.com/checkout/preferences?access_token=' + this.sbx_access_token, preference )
-                        .subscribe( async (response :any )=>{      
-        
+                        .subscribe( async (response :any )=>{    
+                    
+        console.log( 'Datos de la preferencia: ', response );
         resolve( response.sandbox_init_point );
                 
       }, (error) =>{
-        console.error( error );
+        console.error( 'Mercado Api Service Error | getPayment(): ', error );
         reject( error ); 
       });
       
@@ -94,9 +95,10 @@ export class MercadopagoApiService {
     return new Promise(( resolve, reject )=>{
       this.http.get(`https://api.mercadopago.com/v1/payments/${ id }?access_token=` + this.sbx_access_token)
                .subscribe(( response : any )=>{
-                 resolve( response );
+                console.log( 'Datos del pago: ', response ); 
+                resolve( response );
                }, error =>{
-                 console.error( 'Mercado Api Service Error | getPayment(): ', error );
+                 console.error( 'Mercado Api Service Error | proceedToCheckout(): ', error );
                  reject();
                });
     })
