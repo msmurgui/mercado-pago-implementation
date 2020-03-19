@@ -1,1 +1,1 @@
-web: ionic build && ionic serve
+web: node server.js
